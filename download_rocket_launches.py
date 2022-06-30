@@ -13,6 +13,12 @@ dag = DAG (
     schedule_interval=None,
 )
 
+dummy_sleep = BashOperator(
+    task_id = "dummy_sleep",
+    bash_command="sleep 600",
+    dag=dag,
+)
+
 download_launches = BashOperator(
     task_id = "download_launches",
     bash_command="curl -o /tmp/launches.json -L 'https://ll.thespacedevs.com/2.0.0/launch/upcoming'",
@@ -50,4 +56,4 @@ notify = BashOperator(
     bash_command='echo "There are now $(ls /tmp/images/ | wc -l) images."',
     dag=dag,
 )
-download_launches >> get_pictures >> notify
+dummy_sleep >> download_launches >> get_pictures >> notify
