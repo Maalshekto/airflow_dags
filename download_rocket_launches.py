@@ -2,10 +2,12 @@ import json
 import pathlib
 import airflow
 import requests
+import subprocess
 import requests.exceptions as requests_exceptions
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
+from swiftclient.service import SwiftService
 
 
 dag = DAG (
