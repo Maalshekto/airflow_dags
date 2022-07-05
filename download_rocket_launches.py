@@ -43,7 +43,7 @@ def _get_pictures():
     # retrieve from Swift container
     options = {'out_directory': '/tmp'}
     with SwiftService() as swift:
-        for down_res in swift.download(container='swift_airflow_rocket_dag', objects=['launches.json'], ):
+        for down_res in swift.download(container='swift_airflow_rocket_dag', objects=['launches.json'], options = options):
             if down_res['success']:
               print("'%s' downloaded" % down_res['object'])
             else:
