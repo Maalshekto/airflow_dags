@@ -7,6 +7,7 @@ from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 
+
 dag = DAG (
     dag_id="download_rocket_launches",
     start_date=airflow.utils.dates.days_ago(14),
@@ -27,8 +28,23 @@ download_launches = BashOperator(
 )
 
 def _get_pictures(): 
+    
     # Ensure directory exists
     pathlib.Path("/tmp/images").mkdir(parents=True, exist_ok=True)
+     
+    ### Download json from swift container
+    
+    # Set OpenStack connectrion variable
+    bashCommand = "source /app/openrc/openrc.sh"
+    process = subprocess.run(bashCommand, shell=True, executable='/bin/bash')
+    
+    # retrieve from Swift container
+    with SwiftService() as swift:
+        for down_res in swift.download(container='swift_airflow_rocket_dag', objects=['tmp/launches.json']):
+            if down_res['success']:
+                        print("'%s' downloaded" % down_res['object'])
+                    else:
+                        print("'%s' download failed" % down_res['object'])
     # Download all pictures in launches.json
     with open("/tmp/launches.json") as f:
         launches = json.load(f)
