@@ -61,7 +61,7 @@ def _get_pictures():
     with SwiftService(options=options) as swift:
         for down_res in swift.download(container='swift_airflow_rocket_dag', objects=['launches.json'], options={"out_directory" : "/tmp"}):
             if down_res['success']:
-              print("'%s' downloaded" % down_res['object'])
+                print("'%s' downloaded" % down_res['object'])
             else:
                 print("'%s' download failed" % down_res['object'])
     # Download all pictures in launches.json
@@ -76,10 +76,19 @@ def _get_pictures():
                 with open(target_file, "wb") as f:
                     f.write(response.content)
                     print(f"Downloaded {image_url} to {target_file}")
+                with SwiftService(options=options) as swift:
+                    for up_res in swift.upload(swift_airflow_rocket_dag, target_file, object_name=image_filename):
+                        if up_res['success']:
+                            print("'%s' uploaded" % up_res['object'])
+                        else:
+                            print("'%s' upload failed" % up_res['object']) 
+                
             except requests_exceptions.MissingSchema:
                 print(f"{image_url} appears to be an invalid URL.")
             except requests_exceptions.ConnectionError:
                 print(f"Could not connect to {image_url}.")
+    
+            
 
 get_pictures = PythonOperator( 
     task_id="get_pictures",
