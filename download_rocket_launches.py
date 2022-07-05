@@ -77,7 +77,7 @@ def _get_pictures():
                     f.write(response.content)
                     print(f"Downloaded {image_url} to {target_file}")
                 with SwiftService(options=options) as swift:
-                    for up_res in swift.upload("swift_airflow_rocket_dag", target_file, object_name=image_filename):
+                    for up_res in swift.upload("swift_airflow_rocket_dag", target_file):
                         if up_res['success']:
                             print("'%s' uploaded" % up_res['object'])
                         else:
