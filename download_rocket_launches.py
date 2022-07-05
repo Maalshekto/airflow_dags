@@ -2,7 +2,6 @@ import json
 import pathlib
 import airflow
 import requests
-import subprocess
 import requests.exceptions as requests_exceptions
 from airflow import DAG
 from airflow.operators.bash import BashOperator
@@ -29,6 +28,15 @@ download_launches = BashOperator(
     dag=dag,
 )
 
+def shell_source(script):
+    """Sometime you want to emulate the action of "source" in bash,
+    settings some environment variables. Here is a way to do it."""
+    import subprocess, os
+    pipe = subprocess.Popen(". %s; env" % script, stdout=subprocess.PIPE, shell=True, encoding='utf8')
+    output = pipe.communicate()[0]
+    env = dict((line.split("=", 1) for line in output.splitlines()))
+    os.environ.update(env)
+
 def _get_pictures(): 
     
     # Ensure directory exists
@@ -36,9 +44,8 @@ def _get_pictures():
      
     ### Download json from swift container
     
-    # Set OpenStack connectrion variable
-    bashCommand = "source /app/openrc/openrc.sh"
-    process = subprocess.run(bashCommand, shell=True, executable='/bin/bash')
+    # Set OpenStack connection variables
+    shell_source("/app/openrc/openrc.sh")
     
     # retrieve from Swift container
     options = {'out_directory': '/tmp'}
