@@ -48,7 +48,7 @@ def _get_pictures():
     
     # Set OpenStack connection variables
     shell_source("/app/openrc/openrc.sh")
-    os.getenv("OS_TENANT_NAME")
+    print(f"OS_TENANT_NAME {os.getenv('OS_TENANT_NAME')}")
     # retrieve from Swift container
     options = {'out_directory': '/tmp'}
     with SwiftService() as swift:
