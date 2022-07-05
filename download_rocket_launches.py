@@ -2,11 +2,14 @@ import json
 import pathlib
 import airflow
 import requests
+import os
+import subprocess
 import requests.exceptions as requests_exceptions
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from swiftclient.service import SwiftService
+
 
 
 dag = DAG (
@@ -31,7 +34,6 @@ download_launches = BashOperator(
 def shell_source(script):
     """Sometime you want to emulate the action of "source" in bash,
     settings some environment variables. Here is a way to do it."""
-    import subprocess, os
     pipe = subprocess.Popen(". %s; env" % script, stdout=subprocess.PIPE, shell=True, encoding='utf8')
     output = pipe.communicate()[0]
     env = dict((line.split("=", 1) for line in output.splitlines()))
@@ -46,7 +48,7 @@ def _get_pictures():
     
     # Set OpenStack connection variables
     shell_source("/app/openrc/openrc.sh")
-    
+    os.getenv("OS_TENANT_NAME")
     # retrieve from Swift container
     options = {'out_directory': '/tmp'}
     with SwiftService() as swift:
