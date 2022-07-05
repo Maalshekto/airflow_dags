@@ -50,7 +50,6 @@ def _get_pictures():
     shell_source("/app/openrc/openrc.sh")
     print(f"OS_TENANT_NAME {os.getenv('OS_TENANT_NAME')}")
     # retrieve from Swift container
-    options = {'out_directory': '/tmp'}
     with SwiftService() as swift:
         for down_res in swift.download(container='swift_airflow_rocket_dag', objects=['launches.json'], options = options):
             if down_res['success']:
