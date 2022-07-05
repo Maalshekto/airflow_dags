@@ -13,6 +13,10 @@ dag = DAG (
     schedule_interval=None,
 )
 
+create_swift_object_storage = BashOperator(
+    task_id = "create_swift_object_storage",
+    bash_command="source /app/openrc/openrc.sh;swift list"
+
 download_launches = BashOperator(
     task_id = "download_launches",
     bash_command="curl -o /tmp/launches.json -L 'https://ll.thespacedevs.com/2.0.0/launch/upcoming'",
@@ -51,4 +55,4 @@ notify = BashOperator(
     dag=dag,
 )
 
-download_launches >> get_pictures >> notify
+create_swift_object_storage >> download_launches >> get_pictures >> notify
