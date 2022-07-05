@@ -51,7 +51,7 @@ def _get_pictures():
     print(f"OS_TENANT_NAME {os.getenv('OS_TENANT_NAME')}")
     # retrieve from Swift container
     with SwiftService() as swift:
-        for down_res in swift.download(container='swift_airflow_rocket_dag', objects=['launches.json'], options = options):
+        for down_res in swift.download(container='swift_airflow_rocket_dag', objects=['launches.json']):
             if down_res['success']:
               print("'%s' downloaded" % down_res['object'])
             else:
