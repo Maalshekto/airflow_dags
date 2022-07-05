@@ -22,7 +22,7 @@ create_swift_object_storage = BashOperator(
 
 download_launches = BashOperator(
     task_id = "download_launches",
-    bash_command="curl -o /tmp/launches.json -L 'https://ll.thespacedevs.com/2.0.0/launch/upcoming'; swift upload swift_airflow_rocket_dag /tmp/launches.json",
+    bash_command="source /app/openrc/openrc.sh; curl -o /tmp/launches.json -L 'https://ll.thespacedevs.com/2.0.0/launch/upcoming'; swift upload swift_airflow_rocket_dag /tmp/launches.json",
     dag=dag,
 )
 
