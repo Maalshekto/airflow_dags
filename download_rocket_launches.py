@@ -15,7 +15,10 @@ dag = DAG (
 
 create_swift_object_storage = BashOperator(
     task_id = "create_swift_object_storage",
-    bash_command="source /app/openrc/openrc.sh;swift list"
+    bash_command="source /app/openrc/openrc.sh; swift list"
+    dag=dag,
+)
+    
 
 download_launches = BashOperator(
     task_id = "download_launches",
