@@ -44,9 +44,9 @@ def _get_pictures():
     with SwiftService() as swift:
         for down_res in swift.download(container='swift_airflow_rocket_dag', objects=['tmp/launches.json']):
             if down_res['success']:
-                        print("'%s' downloaded" % down_res['object'])
-                    else:
-                        print("'%s' download failed" % down_res['object'])
+              print("'%s' downloaded" % down_res['object'])
+            else:
+                print("'%s' download failed" % down_res['object'])
     # Download all pictures in launches.json
     with open("/tmp/launches.json") as f:
         launches = json.load(f)
