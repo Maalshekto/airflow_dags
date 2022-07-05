@@ -15,7 +15,7 @@ dag = DAG (
 
 create_swift_object_storage = BashOperator(
     task_id = "create_swift_object_storage",
-    bash_command="source /app/openrc/openrc.sh; swift list",
+    bash_command="source /app/openrc/openrc.sh; swift post swift_airflow_rocket_dag",
     dag=dag,
 )
     
