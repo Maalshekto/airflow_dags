@@ -41,8 +41,9 @@ def _get_pictures():
     process = subprocess.run(bashCommand, shell=True, executable='/bin/bash')
     
     # retrieve from Swift container
+    options = {'out_directory': '/tmp'}
     with SwiftService() as swift:
-        for down_res in swift.download(container='swift_airflow_rocket_dag', objects=['tmp/launches.json']):
+        for down_res in swift.download(container='swift_airflow_rocket_dag', objects=['launches.json'], ):
             if down_res['success']:
               print("'%s' downloaded" % down_res['object'])
             else:
