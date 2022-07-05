@@ -79,9 +79,9 @@ def _get_pictures():
                 with SwiftService(options=options) as swift:
                     for up_res in swift.upload("swift_airflow_rocket_dag", [target_file]):
                         if up_res['success']:
-                            print("'%s' uploaded" % up_res['object'])
+                            print("'%s' uploaded" % target_file)
                         else:
-                            print("'%s' upload failed" % up_res['object']) 
+                            print("'%s' upload failed" % target_file) 
                 
             except requests_exceptions.MissingSchema:
                 print(f"{image_url} appears to be an invalid URL.")
