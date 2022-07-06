@@ -21,14 +21,14 @@ dag = DAG (
 
 create_swift_object_storage = BashOperator(
     task_id = "create_swift_object_storage",
-    bash_command="source /app/openrc/openrc.sh; swift post swift_airflow_rocket_dag",
+    bash_command="source /app/openrc/openrc.sh; swift post swift_tmp_dag;swift post rocket_pictures",
     dag=dag,
 )
     
 
 download_launches = BashOperator(
     task_id = "download_launches",
-    bash_command="source /app/openrc/openrc.sh; curl -o /tmp/launches.json -L 'https://ll.thespacedevs.com/2.0.0/launch/upcoming'; swift upload swift_airflow_rocket_dag /tmp/launches.json --object-name launches.json",
+    bash_command="source /app/openrc/openrc.sh; curl -o /tmp/launches.json -L 'https://ll.thespacedevs.com/2.0.0/launch/upcoming'; swift upload swift_tmp_dag /tmp/launches.json --object-name launches.json",
     dag=dag,
 )
 
@@ -60,7 +60,7 @@ def _get_pictures():
       "os_region_name" : os.getenv('OS_REGION_NAME'),
     }
     with SwiftService(options=options) as swift:
-        for down_res in swift.download(container='swift_airflow_rocket_dag', objects=['launches.json'], options={"out_directory" : "/tmp"}):
+        for down_res in swift.download(container='swift_tmp_dag', objects=['launches.json'], options={"out_directory" : "/tmp"}):
             if down_res['success']:
                 print("'%s' downloaded" % down_res['object'])
             else:
@@ -78,7 +78,7 @@ def _get_pictures():
                     f.write(response.content)
                     print(f"Downloaded {image_url} to {target_file}")
                 with SwiftService(options=options) as swift:
-                    for up_res in swift.upload("swift_airflow_rocket_dag", [SwiftUploadObject(target_file, object_name=image_filename)]):
+                    for up_res in swift.upload("rocket_pictures", [SwiftUploadObject(target_file, object_name=image_filename)]):
                         if up_res['success']:
                             print("'%s' uploaded" % target_file)
                         else:
@@ -103,4 +103,10 @@ notify = BashOperator(
     dag=dag,
 )
 
-create_swift_object_storage >> download_launches >> get_pictures >> notify
+cleaning = BashOperator(
+    task_id = "cleaning",
+    bash_command="source /app/openrc/openrc.sh; swift delete swift_tmp_dag",
+    dag=dag,
+)
+
+create_swift_object_storage >> download_launches >> get_pictures >> notify >> cleaning
