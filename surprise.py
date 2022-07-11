@@ -15,6 +15,7 @@ def _real_quantum_backend():
   backend = provider.backend.ibmq_lima
   transpiled = transpile(qx, backend=backend)
   job = backend.run(transpiled)
+  retrieved_job = backend.retrieve_job(job.job_id())
   retrieved_job.wait_for_final_state()
   retrieved_job.result()
   
