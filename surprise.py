@@ -4,7 +4,7 @@ from airflow.operators.python import PythonOperator
 from airflow import DAG
 
 
-from qiskit import IBMQ, assemble, transpile
+from qiskit import IBMQ, assemble, transpile, Aer
 from qiskit.circuit.random import random_circuit
 
 IBMQ.save_account('76416dc2d7a314e56fb9fafd05a24607c8060643a7a3265055655f27e48811d5692d4567c6a2fa82ce69490b237465164c4a9653a13594895eff039f27c6780d')
@@ -21,8 +21,13 @@ def _real_quantum_backend():
   
   
 def _simulator_perfect_quantum_backend():
-  time.sleep(10)
-
+  backend = Aer.get_backend('aer_simulator')
+  transpiled = transpile(qx, backend=backend)
+  job = backend.run(transpiled)
+  retrieved_job = backend.retrieve_job(job.job_id())
+  retrieved_job.wait_for_final_state()
+  retrieved_job.result()
+  
 def _simulator_noisy_quantum_backend():
   time.sleep(10)
 
