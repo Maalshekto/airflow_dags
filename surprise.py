@@ -13,7 +13,7 @@ def _real_quantum_backend():
 def _simulator_perfect_quantum_backend():
   time.sleep(10)
 
-def simulator_noisy_quantum_backend():
+def _simulator_noisy_quantum_backend():
   time.sleep(10)
 
 def _print_result():
