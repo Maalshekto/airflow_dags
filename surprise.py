@@ -46,7 +46,7 @@ Q3 = PythonOperator(
 
 res= PythonOperator(
     task_id="print_result",
-    python_callable=_print_result(), 
+    python_callable=_print_result, 
     dag=dag,
 )
 
