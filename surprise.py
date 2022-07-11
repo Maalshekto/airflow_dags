@@ -24,9 +24,7 @@ def _simulator_perfect_quantum_backend():
   backend = Aer.get_backend('aer_simulator')
   transpiled = transpile(qx, backend=backend)
   job = backend.run(transpiled)
-  retrieved_job = backend.retrieve_job(job.job_id())
-  retrieved_job.wait_for_final_state()
-  retrieved_job.result()
+  job.result()
   
 def _simulator_noisy_quantum_backend():
   time.sleep(10)
