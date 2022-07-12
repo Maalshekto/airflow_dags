@@ -21,6 +21,14 @@ IBMQ.save_account('76416dc2d7a314e56fb9fafd05a24607c8060643a7a3265055655f27e4881
 provider = IBMQ.load_account()
 qx = random_circuit(5, 4, measure=True)
 
+def shell_source(script):
+    """Sometime you want to emulate the action of "source" in bash,
+    settings some environment variables. Here is a way to do it."""
+    pipe = subprocess.Popen(". %s; env" % script, stdout=subprocess.PIPE, shell=True, encoding='utf8')
+    output = pipe.communicate()[0]
+    env = dict((line.split("=", 1) for line in output.splitlines()))
+    os.environ.update(env)
+
 def _real_quantum_backend(): 
   backend = provider.backend.ibmq_lima
   transpiled = transpile(qx, backend=backend)
