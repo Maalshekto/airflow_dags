@@ -40,8 +40,8 @@ def _real_quantum_backend():
   retrieved_job.result()
   
 
-# def _real_quantum_backend(): 
-#  time.sleep(60)
+def _fake_quantum_backend(): 
+  time.sleep(60)
  
   
 def _simulator_perfect_quantum_backend():
@@ -70,9 +70,9 @@ def _simulator_perfect_quantum_backend():
     for up_res in swift.upload(BUCKET_QUANTUM, [
       SwiftUploadObject(f"/tmp/{PERFECT_QUANTUM_PLOT_JPG}", object_name=PERFECT_QUANTUM_PLOT_JPG)]):
       if up_res['success']:
-        print("'%s' uploaded" % target_file)
+        print("'%s' uploaded" % PERFECT_QUANTUM_PLOT_JPG)
       else:
-        print("'%s' upload failed" % target_file) 
+        print("'%s' upload failed" % PERFECT_QUANTUM_PLOT_JPG) 
   
 def _simulator_noisy_quantum_backend():
   backend = provider.backend.ibmq_lima
@@ -109,9 +109,9 @@ def _simulator_noisy_quantum_backend():
     for up_res in swift.upload(BUCKET_QUANTUM, [
       SwiftUploadObject(f"/tmp/{NOISY_QUANTUM_PLOT_JPG}", object_name=NOISY_QUANTUM_PLOT_JPG)]):
       if up_res['success']:
-        print("'%s' uploaded" % target_file)
+        print("'%s' uploaded" % NOISY_QUANTUM_PLOT_JPG)
       else:
-        print("'%s' upload failed" % target_file) 
+        print("'%s' upload failed" % NOISY_QUANTUM_PLOT_JPG) 
 
 def _print_result():
   time.sleep(2)
@@ -131,7 +131,7 @@ create_swift_object_storage = BashOperator(
 
 Q1 = PythonOperator( 
     task_id="real_quantum_backend",
-    python_callable=_real_quantum_backend, 
+    python_callable=_fake_quantum_backend, 
     dag=dag,
 )
 
