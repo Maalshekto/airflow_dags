@@ -49,7 +49,8 @@ def _simulator_noisy_quantum_backend():
   result = execute(qx, Aer.get_backend('qasm_simulator'),
                  coupling_map=coupling_map,
                  basis_gates=basis_gates,
-                 noise_model=noise_model).result()
+                 noise_model=noise_model,
+                 shots = NB_SHOTS).result()
   counts = result.get_counts(qx)
   print(counts)
   plot_histogram(counts)
