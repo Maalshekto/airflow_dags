@@ -15,17 +15,17 @@ IBMQ.save_account('76416dc2d7a314e56fb9fafd05a24607c8060643a7a3265055655f27e4881
 provider = IBMQ.load_account()
 qx = random_circuit(5, 4, measure=True)
 
-#def _real_quantum_backend(): 
-#  backend = provider.backend.ibmq_lima
-#  transpiled = transpile(qx, backend=backend)
-#  job = backend.run(transpiled)
-#  retrieved_job = backend.retrieve_job(job.job_id())
-#  retrieved_job.wait_for_final_state()
-#  retrieved_job.result()
+def _real_quantum_backend(): 
+  backend = provider.backend.ibmq_lima
+  transpiled = transpile(qx, backend=backend)
+  job = backend.run(transpiled)
+  retrieved_job = backend.retrieve_job(job.job_id())
+  retrieved_job.wait_for_final_state()
+  retrieved_job.result()
   
 
-def _real_quantum_backend(): 
-  time.sleep(60)
+# def _real_quantum_backend(): 
+#  time.sleep(60)
  
   
 def _simulator_perfect_quantum_backend():
