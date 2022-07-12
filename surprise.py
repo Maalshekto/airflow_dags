@@ -10,6 +10,7 @@ import os
 import subprocess
 
 from qiskit import IBMQ, assemble, transpile, execute, Aer
+from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
 from qiskit.circuit.random import random_circuit
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.tools.visualization import plot_histogram
