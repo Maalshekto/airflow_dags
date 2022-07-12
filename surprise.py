@@ -6,6 +6,8 @@ from airflow import DAG
 
 from swiftclient.service import SwiftService
 from swiftclient.service import SwiftUploadObject
+import os
+import subprocess
 
 from qiskit import IBMQ, assemble, transpile, execute, Aer
 from qiskit.circuit.random import random_circuit
