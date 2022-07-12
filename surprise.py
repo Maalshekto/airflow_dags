@@ -3,13 +3,18 @@ import time
 from airflow.operators.python import PythonOperator
 from airflow import DAG
 
+from swiftclient.service import SwiftService
+from swiftclient.service import SwiftUploadObject
 
 from qiskit import IBMQ, assemble, transpile, execute, Aer
 from qiskit.circuit.random import random_circuit
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.tools.visualization import plot_histogram
 
-NB_SHOTS = 4000
+NB_SHOTS = 4000 # Equal to the number of shots of the real quantum backend.
+BUCKET_QUANTUM = "swift_quantum"
+PERFECT_QUANTUM_PLOT_JPG = "histogram_perfect.jpg"
+NOISY_QUANTUM_PLOT_JPG = "histogram_noisy.jpg"
 
 IBMQ.save_account('76416dc2d7a314e56fb9fafd05a24607c8060643a7a3265055655f27e48811d5692d4567c6a2fa82ce69490b237465164c4a9653a13594895eff039f27c6780d')
 provider = IBMQ.load_account()
@@ -35,7 +40,28 @@ def _simulator_perfect_quantum_backend():
   result = job.result()
   counts = result.get_counts(qx)
   print(counts)
-  plot_histogram(counts)
+  plot_histogram(counts, filename = f"/tmp/{PERFECT_QUANTUM_PLOT_JPG}")
+  
+  # Set OpenStack connection variables
+  shell_source("/app/openrc/openrc.sh")
+  print(f"OS_TENANT_NAME {os.getenv('OS_TENANT_NAME')}")
+  # retrieve from Swift container
+  options = {
+    "auth_version" : os.getenv('OS_IDENTITY_API_VERSION'),
+    "os_username" : os.getenv('OS_USERNAME'),
+    "os_password" : os.getenv('OS_PASSWORD'),
+    "os_tenant_name" : os.getenv('OS_TENANT_NAME'),
+    "os_auth_url" :  os.getenv('OS_AUTH_URL'),
+    "os_region_name" : os.getenv('OS_REGION_NAME'),
+  }
+  
+  with SwiftService(options=options) as swift:
+    for up_res in swift.upload(BUCKET_QUANTUM, [
+      SwiftUploadObject(f"/tmp/{PERFECT_QUANTUM_PLOT_JPG}", object_name=PERFECT_QUANTUM_PLOT_JPG)]):
+      if up_res['success']:
+        print("'%s' uploaded" % target_file)
+      else:
+        print("'%s' upload failed" % target_file) 
   
 def _simulator_noisy_quantum_backend():
   backend = provider.backend.ibmq_lima
@@ -53,7 +79,28 @@ def _simulator_noisy_quantum_backend():
                  shots = NB_SHOTS).result()
   counts = result.get_counts(qx)
   print(counts)
-  plot_histogram(counts)
+  plot_histogram(counts, filename = f"/tmp/{NOISY_QUANTUM_PLOT_JPG}")
+  
+  # Set OpenStack connection variables
+  shell_source("/app/openrc/openrc.sh")
+  print(f"OS_TENANT_NAME {os.getenv('OS_TENANT_NAME')}")
+  # retrieve from Swift container
+  options = {
+    "auth_version" : os.getenv('OS_IDENTITY_API_VERSION'),
+    "os_username" : os.getenv('OS_USERNAME'),
+    "os_password" : os.getenv('OS_PASSWORD'),
+    "os_tenant_name" : os.getenv('OS_TENANT_NAME'),
+    "os_auth_url" :  os.getenv('OS_AUTH_URL'),
+    "os_region_name" : os.getenv('OS_REGION_NAME'),
+  }
+  
+  with SwiftService(options=options) as swift:
+    for up_res in swift.upload(BUCKET_QUANTUM, [
+      SwiftUploadObject(f"/tmp/{NOISY_QUANTUM_PLOT_JPG}", object_name=NOISY_QUANTUM_PLOT_JPG)]):
+      if up_res['success']:
+        print("'%s' uploaded" % target_file)
+      else:
+        print("'%s' upload failed" % target_file) 
 
 def _print_result():
   time.sleep(2)
@@ -63,6 +110,12 @@ dag = DAG (
     dag_id="surprise",
     start_date=airflow.utils.dates.days_ago(14),
     schedule_interval=None,
+)
+
+create_swift_object_storage = BashOperator(
+    task_id = "create_swift_object_storage",
+    bash_command=f"source /app/openrc/openrc.sh; swift post {BUCKET_QUANTUM};",
+    dag=dag,
 )
 
 Q1 = PythonOperator( 
@@ -90,4 +143,4 @@ res= PythonOperator(
 )
 
 
-[Q1, Q2, Q3] >> res
+create_swift_object_storage >> [Q1, Q2, Q3] >> res
