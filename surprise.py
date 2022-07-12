@@ -21,7 +21,13 @@ NOISY_QUANTUM_PLOT_JPG = "histogram_noisy.jpg"
 
 IBMQ.save_account('76416dc2d7a314e56fb9fafd05a24607c8060643a7a3265055655f27e48811d5692d4567c6a2fa82ce69490b237465164c4a9653a13594895eff039f27c6780d')
 provider = IBMQ.load_account()
-qx = random_circuit(5, 4, measure=True)
+#qx = random_circuit(5, 4, measure=True)
+qr=QuantumRegister(2)
+cr=ClassicalRegister(2)
+qx=QuantumCircuit(qr,cr)
+qx.h(qr[0])
+qx.cx(qr[0],qr[1])
+qx.measure(qr,cr)
 
 def shell_source(script):
     """Sometime you want to emulate the action of "source" in bash,
