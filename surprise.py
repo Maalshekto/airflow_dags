@@ -7,6 +7,9 @@ from airflow import DAG
 from qiskit import IBMQ, assemble, transpile, execute, Aer
 from qiskit.circuit.random import random_circuit
 from qiskit.providers.aer.noise import NoiseModel
+from qiskit.tools.visualization import plot_histogram
+
+NB_SHOTS = 4000
 
 IBMQ.save_account('76416dc2d7a314e56fb9fafd05a24607c8060643a7a3265055655f27e48811d5692d4567c6a2fa82ce69490b237465164c4a9653a13594895eff039f27c6780d')
 provider = IBMQ.load_account()
@@ -28,10 +31,11 @@ def _real_quantum_backend():
 def _simulator_perfect_quantum_backend():
   backend = Aer.get_backend('aer_simulator')
   transpiled = transpile(qx, backend=backend)
-  job = backend.run(transpiled)
+  job = backend.run(transpiled, shots = NB_SHOTS)
   result = job.result()
   counts = result.get_counts(qx)
   print(counts)
+  plot_histogram(counts)
   
 def _simulator_noisy_quantum_backend():
   backend = provider.backend.ibmq_lima
@@ -48,6 +52,7 @@ def _simulator_noisy_quantum_backend():
                  noise_model=noise_model).result()
   counts = result.get_counts(qx)
   print(counts)
+  plot_histogram(counts)
 
 def _print_result():
   time.sleep(2)
