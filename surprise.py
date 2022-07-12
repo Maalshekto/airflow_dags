@@ -1,6 +1,7 @@
 import airflow
 import time
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 from airflow import DAG
 
 from swiftclient.service import SwiftService
