@@ -29,7 +29,9 @@ def _simulator_perfect_quantum_backend():
   backend = Aer.get_backend('aer_simulator')
   transpiled = transpile(qx, backend=backend)
   job = backend.run(transpiled)
-  job.result()
+  result = job.result()
+  counts = result.get_counts(qx)
+  print(counts)
   
 def _simulator_noisy_quantum_backend():
   backend = provider.backend.ibmq_lima
@@ -44,6 +46,8 @@ def _simulator_noisy_quantum_backend():
                  coupling_map=coupling_map,
                  basis_gates=basis_gates,
                  noise_model=noise_model).result()
+  counts = result.get_counts(qx)
+  print(counts)
   
   print(result)
 
