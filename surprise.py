@@ -4,7 +4,7 @@ from airflow.operators.python import PythonOperator
 from airflow import DAG
 
 
-from qiskit import IBMQ, assemble, transpile, Aer
+from qiskit import IBMQ, assemble, transpile, execute, Aer
 from qiskit.circuit.random import random_circuit
 from qiskit.providers.aer.noise import NoiseModel
 
