@@ -48,8 +48,6 @@ def _simulator_noisy_quantum_backend():
                  noise_model=noise_model).result()
   counts = result.get_counts(qx)
   print(counts)
-  
-  print(result)
 
 def _print_result():
   time.sleep(2)
