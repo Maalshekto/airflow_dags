@@ -161,5 +161,4 @@ res= PythonOperator(
     dag=dag,
 )
 
-
 create_swift_object_storage >> [Q1, Q2, Q3] >> res
