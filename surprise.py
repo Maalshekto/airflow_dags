@@ -45,14 +45,11 @@ def _real_quantum_backend():
   retrieved_job = backend.retrieve_job(job.job_id())
   retrieved_job.wait_for_final_state()
   result = retrieved_job.result()
-  return result.get_counts(qx)
-
-  
+  return result.get_counts(qx) 
 
 def _fake_quantum_backend(): 
   time.sleep(60)
- 
-  
+
 def _simulator_perfect_quantum_backend():
   backend = Aer.get_backend('aer_simulator')
   transpiled = transpile(qx, backend=backend)
@@ -83,6 +80,7 @@ def _simulator_perfect_quantum_backend():
       else:
         print("'%s' upload failed" % PERFECT_QUANTUM_PLOT_JPG) 
   return counts
+
 def _simulator_noisy_quantum_backend():
   backend = provider.backend.ibmq_lima
   noise_model = NoiseModel.from_backend(backend)
