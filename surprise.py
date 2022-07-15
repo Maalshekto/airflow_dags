@@ -134,6 +134,7 @@ dag = DAG (
 create_swift_object_storage = BashOperator(
     task_id = "create_swift_object_storage",
     bash_command=f"source /app/openrc/openrc.sh; swift post {BUCKET_QUANTUM};",
+    do_xcom_push=False,
     dag=dag,
 )
 
