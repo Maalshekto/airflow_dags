@@ -123,8 +123,8 @@ def _simulator_noisy_quantum_backend(ti):
   ti.xcom_push(key='counts_experiment', value=counts)
 
 def _print_result(ti):
-  fetched_accuracies = ti.xcom_pull(key='counts_experiment', task_ids=['real_quantum_backend', 'simulator_perfect_quantum_backend', 'simulator_noisy_quantum_backend'])
-  print(f'Results : {fetched_accuracies}')
+  counts_experiment = ti.xcom_pull(key='counts_experiment', task_ids=['real_quantum_backend', 'simulator_perfect_quantum_backend', 'simulator_noisy_quantum_backend'])
+  print(f'Results : {counts_experiment}')
  
 
 dag = DAG (
