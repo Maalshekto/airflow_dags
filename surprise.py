@@ -38,19 +38,20 @@ def shell_source(script):
     env = dict((line.split("=", 1) for line in output.splitlines()))
     os.environ.update(env)
 
-def _real_quantum_backend(): 
+def _real_quantum_backend(ti): 
   backend = provider.backend.ibmq_lima
   transpiled = transpile(qx, backend=backend)
   job = backend.run(transpiled)
   retrieved_job = backend.retrieve_job(job.job_id())
   retrieved_job.wait_for_final_state()
   result = retrieved_job.result()
-  return result.get_counts(qx) 
+  ti.xcom_push(key='counts_experiment', value=result.get_counts(qx))
 
-def _fake_quantum_backend(): 
-  time.sleep(60)
+def _fake_quantum_backend(ti): 
+  time.sleep(10)
+  ti.xcom_push(key='counts_experiment', value={'01': 79, '10': 70, '00': 1959, '11': 1892})
 
-def _simulator_perfect_quantum_backend():
+def _simulator_perfect_quantum_backend(ti):
   backend = Aer.get_backend('aer_simulator')
   transpiled = transpile(qx, backend=backend)
   job = backend.run(transpiled, shots = NB_SHOTS)
@@ -79,9 +80,9 @@ def _simulator_perfect_quantum_backend():
         print("'%s' uploaded" % PERFECT_QUANTUM_PLOT_JPG)
       else:
         print("'%s' upload failed" % PERFECT_QUANTUM_PLOT_JPG) 
-  return counts
+  ti.xcom_push(key='counts_experiment', value=counts)
 
-def _simulator_noisy_quantum_backend():
+def _simulator_noisy_quantum_backend(ti):
   backend = provider.backend.ibmq_lima
   noise_model = NoiseModel.from_backend(backend)
   # Get coupling map from backend
@@ -119,7 +120,7 @@ def _simulator_noisy_quantum_backend():
         print("'%s' uploaded" % NOISY_QUANTUM_PLOT_JPG)
       else:
         print("'%s' upload failed" % NOISY_QUANTUM_PLOT_JPG) 
-  return counts
+  ti.xcom_push(key='counts_experiment', value=counts)
 
 def _print_result():
   time.sleep(2)
