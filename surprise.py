@@ -123,7 +123,8 @@ def _simulator_noisy_quantum_backend(ti):
   ti.xcom_push(key='counts_experiment', value=counts)
 
 def _print_result():
-  time.sleep(2)
+  fetched_accuracies = ti.xcom_pull(key='counts_experiment', task_ids=['real_quantum_backend', 'simulator_perfect_quantum_backend', 'simulator_noisy_quantum_backend'])
+  print(f'Results : {fetched_accuracies}')
  
 
 dag = DAG (
@@ -141,7 +142,7 @@ create_swift_object_storage = BashOperator(
 
 Q1 = PythonOperator( 
     task_id="real_quantum_backend",
-    python_callable=_real_quantum_backend, 
+    python_callable=_fake_quantum_backend, 
     dag=dag,
 )
 
