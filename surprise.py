@@ -44,7 +44,9 @@ def _real_quantum_backend():
   job = backend.run(transpiled)
   retrieved_job = backend.retrieve_job(job.job_id())
   retrieved_job.wait_for_final_state()
-  retrieved_job.result()
+  result = retrieved_job.result()
+  return result.get_counts(qx)
+
   
 
 def _fake_quantum_backend(): 
@@ -80,7 +82,7 @@ def _simulator_perfect_quantum_backend():
         print("'%s' uploaded" % PERFECT_QUANTUM_PLOT_JPG)
       else:
         print("'%s' upload failed" % PERFECT_QUANTUM_PLOT_JPG) 
-  
+  return counts
 def _simulator_noisy_quantum_backend():
   backend = provider.backend.ibmq_lima
   noise_model = NoiseModel.from_backend(backend)
@@ -119,6 +121,7 @@ def _simulator_noisy_quantum_backend():
         print("'%s' uploaded" % NOISY_QUANTUM_PLOT_JPG)
       else:
         print("'%s' upload failed" % NOISY_QUANTUM_PLOT_JPG) 
+  return counts
 
 def _print_result():
   time.sleep(2)
