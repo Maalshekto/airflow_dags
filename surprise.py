@@ -15,10 +15,13 @@ from qiskit.circuit.random import random_circuit
 from qiskit.providers.aer.noise import NoiseModel
 from qiskit.tools.visualization import plot_histogram
 
+import pandas as pd
+
 NB_SHOTS = 4000 # Equal to the number of shots of the real quantum backend.
 BUCKET_QUANTUM = "swift_quantum"
 PERFECT_QUANTUM_PLOT_JPG = "histogram_perfect.jpg"
 NOISY_QUANTUM_PLOT_JPG = "histogram_noisy.jpg"
+FINAL_RESULTS_PLOT_JPG = "final_results.jpg"
 
 IBMQ.save_account('76416dc2d7a314e56fb9fafd05a24607c8060643a7a3265055655f27e48811d5692d4567c6a2fa82ce69490b237465164c4a9653a13594895eff039f27c6780d')
 provider = IBMQ.load_account()
@@ -125,6 +128,35 @@ def _simulator_noisy_quantum_backend(ti):
 def _print_result(ti):
   counts_experiment = ti.xcom_pull(key='counts_experiment', task_ids=['real_quantum_backend', 'simulator_perfect_quantum_backend', 'simulator_noisy_quantum_backend'])
   print(f'Results : {counts_experiment}')
+  df = pd.DataFrame(counts_experiment)
+  df = df.reindex(sorted(df.columns), axis=1)
+  df = df.fillna(0)
+  df.index = [ 'Real backend', 'Perfect simulated backend', 'Noisy simulated backend' ]
+  fig = df.plot(kind='barh', subplots=True, figsize=(16,10))[0].get_figure() 
+  plt.tight_layout()
+  fig.savefig('figure.png')
+
+  # Set OpenStack connection variables
+  shell_source("/app/openrc/openrc.sh")
+  print(f"OS_TENANT_NAME {os.getenv('OS_TENANT_NAME')}")
+  
+  # retrieve from Swift container
+  options = {
+    "auth_version" : os.getenv('OS_IDENTITY_API_VERSION'),
+    "os_username" : os.getenv('OS_USERNAME'),
+    "os_password" : os.getenv('OS_PASSWORD'),
+    "os_tenant_name" : os.getenv('OS_TENANT_NAME'),
+    "os_auth_url" :  os.getenv('OS_AUTH_URL'),
+    "os_region_name" : os.getenv('OS_REGION_NAME'),
+  }
+  
+  with SwiftService(options=options) as swift:
+    for up_res in swift.upload(BUCKET_QUANTUM, [
+      SwiftUploadObject(f"/tmp/{FINAL_RESULTS_PLOT_JPG}", object_name=FINAL_RESULTS_PLOT_JPG)]):
+      if up_res['success']:
+        print("'%s' uploaded" % FINAL_RESULTS_PLOT_JPG)
+      else:
+        print("'%s' upload failed" % FINAL_RESULTS_PLOT_JPG) 
  
 
 dag = DAG (
@@ -142,7 +174,7 @@ create_swift_object_storage = BashOperator(
 
 Q1 = PythonOperator( 
     task_id="real_quantum_backend",
-    python_callable=_fake_quantum_backend, 
+    python_callable=_real_quantum_backend, 
     dag=dag,
 )
 
