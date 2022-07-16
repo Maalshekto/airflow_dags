@@ -16,6 +16,7 @@ from qiskit.providers.aer.noise import NoiseModel
 from qiskit.tools.visualization import plot_histogram
 
 import pandas as pd
+import matplotlib.pyplot as plt
 
 NB_SHOTS = 4000 # Equal to the number of shots of the real quantum backend.
 BUCKET_QUANTUM = "swift_quantum"
