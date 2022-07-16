@@ -135,7 +135,7 @@ def _print_result(ti):
   df.index = [ 'Real backend', 'Perfect simulated backend', 'Noisy simulated backend' ]
   fig = df.plot(kind='barh', subplots=True, figsize=(16,10))[0].get_figure() 
   plt.tight_layout()
-  fig.savefig('figure.png')
+  fig.savefig(f"/tmp/{FINAL_RESULTS_PLOT_JPG}")
 
   # Set OpenStack connection variables
   shell_source("/app/openrc/openrc.sh")
@@ -175,7 +175,7 @@ create_swift_object_storage = BashOperator(
 
 Q1 = PythonOperator( 
     task_id="real_quantum_backend",
-    python_callable=_real_quantum_backend, 
+    python_callable=_fake_quantum_backend, 
     dag=dag,
 )
 
