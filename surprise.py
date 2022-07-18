@@ -87,7 +87,7 @@ def _simulator_perfect_quantum_backend(ti):
   ti.xcom_push(key='counts_experiment', value=counts)
 
 def _simulator_noisy_quantum_backend(ti):
-  backend = provider.backend.ibmq_lima
+  backend = provider.backend.ibm_oslo
   noise_model = NoiseModel.from_backend(backend)
   # Get coupling map from backend
   coupling_map = backend.configuration().coupling_map
