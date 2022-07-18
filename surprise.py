@@ -43,7 +43,7 @@ def shell_source(script):
     os.environ.update(env)
 
 def _real_quantum_backend(ti): 
-  backend = provider.backend.ibmq_lima
+  backend = provider.backend.ibm_oslo
   transpiled = transpile(qx, backend=backend)
   job = backend.run(transpiled)
   retrieved_job = backend.retrieve_job(job.job_id())
