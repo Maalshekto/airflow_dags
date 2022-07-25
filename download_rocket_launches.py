@@ -4,6 +4,7 @@ import airflow
 import requests
 import os
 import subprocess
+import time
 import requests.exceptions as requests_exceptions
 from airflow import DAG
 from airflow.operators.bash import BashOperator
@@ -46,7 +47,7 @@ def _get_pictures():
     pathlib.Path("/tmp/images").mkdir(parents=True, exist_ok=True)
      
     ### Download json from swift container
-    
+    time.sleep(300)
     # Set OpenStack connection variables
     shell_source("/app/openrc/openrc.sh")
     print(f"OS_TENANT_NAME {os.getenv('OS_TENANT_NAME')}")
