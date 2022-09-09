@@ -64,7 +64,7 @@ def _fake_quantum_backend(ti):
 
 def _simulator_perfect_quantum_backend(ti):
   backend = Aer.get_backend('aer_simulator')
-  transpiled = transpile(qx, backend=backend)
+  transpiled = transpile(qx, backend=backend, optimization_level=0)
   job = backend.run(transpiled, shots = NB_SHOTS)
   result = job.result()
   counts = result.get_counts(qx)
