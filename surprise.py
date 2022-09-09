@@ -51,7 +51,7 @@ def shell_source(script):
 
 def _real_quantum_backend(ti): 
   backend = provider.backend.ibm_oslo
-  transpiled = transpile(qx, backend=backend)
+  transpiled = transpile(qx, backend=backend, optimization_level=0)
   job = backend.run(transpiled)
   retrieved_job = backend.retrieve_job(job.job_id())
   retrieved_job.wait_for_final_state()
