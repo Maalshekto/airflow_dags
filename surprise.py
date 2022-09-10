@@ -104,6 +104,7 @@ def _simulator_noisy_quantum_backend(ti):
   basis_gates = noise_model.basis_gates
   
   result = execute(qx, Aer.get_backend('qasm_simulator'),
+                 optimization_level=0,
                  coupling_map=coupling_map,
                  basis_gates=basis_gates,
                  noise_model=noise_model,
