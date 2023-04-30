@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from textwrap import dedent
-import logging
+import logging, sys
 
 # The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
