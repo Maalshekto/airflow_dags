@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from textwrap import dedent
-import logging, sys
+#import logging, sys
 
 # The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
@@ -8,10 +8,10 @@ from airflow import DAG
 # Operators; we need this to operate!
 from airflow.operators.bash import BashOperator
 
-log = logging.getLogger("airflow.task")
-handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.INFO)
-log.addHandler(handler)
+#log = logging.getLogger("airflow.task")
+#handler = logging.StreamHandler(sys.stdout)
+#handler.setLevel(logging.INFO)
+#log.addHandler(handler)
 
 with DAG(
     'my-tutorial',
