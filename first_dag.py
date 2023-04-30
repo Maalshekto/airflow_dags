@@ -6,6 +6,12 @@ from airflow import DAG
 
 # Operators; we need this to operate!
 from airflow.operators.bash import BashOperator
+
+log = logging.getLogger("airflow.task")
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.INFO)
+log.addHandler(handler)
+
 with DAG(
     'my-tutorial',
     # These args will get passed on to each operator
